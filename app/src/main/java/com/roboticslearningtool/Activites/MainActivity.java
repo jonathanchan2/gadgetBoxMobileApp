@@ -72,6 +72,7 @@ public class MainActivity extends AppCompatActivity {
     volatile boolean stopWorker;
     String roboCommand = null;
     boolean bthStatus = false;
+    String test;
 
 
     @Override
