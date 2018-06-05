@@ -1,9 +1,15 @@
 package com.roboticslearningtool.Fragments;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.VectorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
@@ -55,7 +61,7 @@ public class BlockViewFrg extends Fragment{
         final View blockview = view.findViewById(R.id.block_view_layout);
         final RelativeLayout rl = (RelativeLayout) blockview;
 
-        String roboCode = "SS;CI(=1)Y;CS0301(=Y);CK(=4);BO(=2=100);BL(=2=100);CQ(=2);CT(=2);CG(=2);CL(=4);AC01;$";
+        String roboCode = "SS;CI(=1)Y;CS0301(=Y);CK(=4);BO(=2=100);BL(=2=75);CQ(=2);CT(=2);CG(=2);CL(=4);AC01;$";
         final List<RoboBlock> blockList = new ArrayList<>();
         final List<RoboArrow> arrowList = new ArrayList<>();
         String[] data = roboCode.split(Pattern.quote(";"));
@@ -73,19 +79,22 @@ public class BlockViewFrg extends Fragment{
         for (int i = 0; i < data.length-1; i++) {
             if (data[i].substring(0,2).equals("AC")){
                  int end = Integer.parseInt(data[i].substring(2,data[i].length()));
-                arrowList.add(new RoboArrow(i-1,end));
+                arrowList.add(new RoboArrow(i-1,end,4));
             }
             else if (data[i].substring(0,2).equals("CS")){
                 //Positive path
-                int end = end = Integer.parseInt(data[i].substring(2,4));
+                int end =  Integer.parseInt(data[i].substring(2,4));
 
-                arrowList.add(new RoboArrow(i,end));
+                arrowList.add(new RoboArrow(i,end,2));
 
                 //Negative path
                  end = Integer.parseInt(data[i].substring(4,6));
-                arrowList.add(new RoboArrow(i,end));
+                arrowList.add(new RoboArrow(i,end,3));
             }
             else{
+                if (i < blockList.size()-1){
+                    arrowList.add(new RoboArrow(i,i+1,1));
+                }
 
 
             }
@@ -101,7 +110,7 @@ public class BlockViewFrg extends Fragment{
 
             RelativeLayout.LayoutParams blockViewParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             blockViewParams.addRule(RelativeLayout.END_OF, lastID);
-            blockViewParams.setMarginEnd(40);
+            blockViewParams.setMarginEnd(150);
             nextBlockView.setLayoutParams(blockViewParams);
             if(nextBlock.hasvalues) {
                 nextBlock.setBlockValues();
@@ -129,6 +138,7 @@ public class BlockViewFrg extends Fragment{
 //Calculate Arrows coordinates and Display Arrows from arrowlist
         blockview.getViewTreeObserver().addOnGlobalLayoutListener(
                 new ViewTreeObserver.OnGlobalLayoutListener() {
+                    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
                     public void onGlobalLayout() {
                         blockview.getViewTreeObserver().removeOnGlobalLayoutListener(this);
 
@@ -141,9 +151,12 @@ public class BlockViewFrg extends Fragment{
 
                         }
 
+
+
+                        Drawable d =  getActivity().getResources().getDrawable(R.drawable.arrowhead,null);
                         DrawingView drawView = (DrawingView) blockview;
                         drawView.setArrowList(arrowList);
-                        drawView.setupArrows();
+                        drawView.setBitmap(drawableToBitmap(d));
 
                     }
                 }
@@ -154,6 +167,18 @@ public class BlockViewFrg extends Fragment{
 
 
     }
+    public static Bitmap drawableToBitmap (Drawable drawable) {
 
+        if (drawable instanceof BitmapDrawable) {
+            return ((BitmapDrawable)drawable).getBitmap();
+        }
+
+        Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+        drawable.draw(canvas);
+
+        return bitmap;
+    }
 
 }

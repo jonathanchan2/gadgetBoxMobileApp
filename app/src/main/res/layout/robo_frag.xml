@@ -2,53 +2,59 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="#e7e7e7"
-    android:baselineAligned="false">
-
-
-
+    android:baselineAligned="false"
+    android:orientation="vertical">
 
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1.3"
-        android:padding="15dp"
+        android:baselineAligned="false"
         android:orientation="horizontal"
-        android:baselineAligned="false">
+        android:padding="15dp">
 
         <Button
+            android:id="@+id/bthConnect"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Connect"
-            android:id="@+id/bthConnect"
             android:background="#3ebe21"
             android:padding="4dp"
+            android:text="Connect"
             android:textColor="#f9f9f9" />
-
 
 
     </LinearLayout>
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Robot Status"
+        android:layout_gravity="center_horizontal"
+
+        android:textStyle="normal|bold"
+        android:textSize="28sp"
+        android:textColor="@android:color/black" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_margin="30dp"
         android:layout_weight="6"
-        android:padding="15dp"
-        android:orientation="horizontal"
+        android:background="#000000"
         android:baselineAligned="false"
-        android:background="#000000">
-
+        android:orientation="horizontal"
+        android:padding="15dp">
 
 
         <TextView
+            android:id="@+id/roboLogs"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:textAppearance="?android:attr/textAppearanceMedium"
             android:text=""
-            android:id="@+id/roboLogs"
             android:textAlignment="viewEnd"
+            android:textAppearance="?android:attr/textAppearanceMedium"
 
             />
     </LinearLayout>
@@ -58,50 +64,45 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="2"
-        android:padding="15dp"
+        android:baselineAligned="false"
 
         android:orientation="horizontal"
-        android:baselineAligned="false">
+        android:padding="15dp">
 
 
         <Button
-            android:layout_width="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:text="Change File"
             android:id="@+id/fileChangebtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_margin="5dp"
             android:background="#2b29bb"
             android:padding="4dp"
+            android:text="Change File"
             android:textColor="#f9f9f9" />
 
 
         <TextView
+            android:id="@+id/FileTXT"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_marginLeft="10dp"
-            android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="Current File:"
-            android:id="@+id/FileTXT"
+            android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="#000000" />
 
         <TextView
+            android:id="@+id/FileStatus"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="None"
+            android:layout_marginLeft="5dp"
             android:maxLines="200"
             android:scrollbars="vertical"
-            android:id="@+id/FileStatus"
-            android:layout_marginLeft="5dp"
+            android:text="None"
+            android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="#000000" />
-
-
-
-
-
 
 
     </LinearLayout>
@@ -111,9 +112,9 @@
         android:id="@+id/sendFile"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:drawableRight="@android:drawable/ic_menu_send"
-        android:drawableEnd="@android:drawable/ic_menu_send"
         android:background="#f11109"
+        android:drawableEnd="@android:drawable/ic_menu_send"
+        android:drawableRight="@android:drawable/ic_menu_send"
         android:text="SEND FILE TO ROBOT"
         android:textColor="#ffffff"
         android:textStyle="bold" />
