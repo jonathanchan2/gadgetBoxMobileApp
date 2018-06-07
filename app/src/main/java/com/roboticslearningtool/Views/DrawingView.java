@@ -5,6 +5,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.os.Build;
@@ -60,16 +61,16 @@ public class DrawingView extends RelativeLayout {
         super.onDraw(canvas);
 
         for(int i=0;i<arrowList.size();i++){
-
-            canvas.drawPath(arrowList.get(i).getArrowPath(), arrowList.get(i).getArrowPaint());
-
-
+            RoboArrow arrow = arrowList.get(i);
+            canvas.drawPath(arrow.getArrowPath(), arrow.getArrowPaint());
+            if(arrowList.get(i).getArrowhead()!= null) {
+                canvas.drawBitmap(arrow.getArrowhead(),arrow.getArrowHeadx() , arrow.getArrowHeady() , arrow.getArrowPaint());
+            }
         }
-//        canvas.drawBitmap(bitmap,700,900,arrowList.get(2).getArrowPaint());
+
+
     }
 
 
-    public void setBitmap(Bitmap bitmap) {
-        this.bitmap = Bitmap.createScaledBitmap(bitmap,50,50,false);
-    }
+
 }

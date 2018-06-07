@@ -6,11 +6,13 @@
 
 
     <TextView
-        android:padding="10dp"
+
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@color/yellowBlock"
-        android:textSize="48sp"
+        android:gravity="center"
+        android:background="@drawable/startblk"
+        android:textSize="36sp"
+        android:fontFamily="serif"
         android:text="@string/start"
         android:textAlignment="center"
         android:textColor="#FFFF" />

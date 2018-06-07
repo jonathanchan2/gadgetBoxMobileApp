@@ -79,21 +79,21 @@ public class BlockViewFrg extends Fragment{
         for (int i = 0; i < data.length-1; i++) {
             if (data[i].substring(0,2).equals("AC")){
                  int end = Integer.parseInt(data[i].substring(2,data[i].length()));
-                arrowList.add(new RoboArrow(i-1,end,4));
+                arrowList.add(new RoboArrow(getActivity(),i-1,end,4));
             }
             else if (data[i].substring(0,2).equals("CS")){
                 //Positive path
                 int end =  Integer.parseInt(data[i].substring(2,4));
 
-                arrowList.add(new RoboArrow(i,end,2));
+                arrowList.add(new RoboArrow(getActivity(),i,end,2));
 
                 //Negative path
                  end = Integer.parseInt(data[i].substring(4,6));
-                arrowList.add(new RoboArrow(i,end,3));
+                arrowList.add(new RoboArrow(getActivity(),i,end,3));
             }
             else{
                 if (i < blockList.size()-1){
-                    arrowList.add(new RoboArrow(i,i+1,1));
+                    arrowList.add(new RoboArrow(getActivity(),i,i+1,1));
                 }
 
 
@@ -110,7 +110,10 @@ public class BlockViewFrg extends Fragment{
 
             RelativeLayout.LayoutParams blockViewParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             blockViewParams.addRule(RelativeLayout.END_OF, lastID);
+
+
             blockViewParams.setMarginEnd(150);
+
             nextBlockView.setLayoutParams(blockViewParams);
             if(nextBlock.hasvalues) {
                 nextBlock.setBlockValues();
@@ -120,18 +123,6 @@ public class BlockViewFrg extends Fragment{
             lastID = nextBlockView.getId();
 
 
-
-//            if(i != blockList.size()-1) {
-//                ImageView arrowImage = new ImageView(getActivity().getApplicationContext());
-//                int arrowID = View.generateViewId();
-//                arrowImage.setId(arrowID);
-//                arrowImage.setImageDrawable(ContextCompat.getDrawable(getActivity().getApplicationContext(), R.drawable.arrowvector));
-//                RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(100, 50);
-//                lp.addRule(RelativeLayout.END_OF, lastID);
-//                arrowImage.setLayoutParams(lp);
-//                rl.addView(arrowImage);
-//                lastID = arrowID;
-//            }
 
         }
 
@@ -153,10 +144,10 @@ public class BlockViewFrg extends Fragment{
 
 
 
-                        Drawable d =  getActivity().getResources().getDrawable(R.drawable.arrowhead,null);
+
                         DrawingView drawView = (DrawingView) blockview;
                         drawView.setArrowList(arrowList);
-                        drawView.setBitmap(drawableToBitmap(d));
+
 
                     }
                 }
@@ -166,19 +157,6 @@ public class BlockViewFrg extends Fragment{
 
 
 
-    }
-    public static Bitmap drawableToBitmap (Drawable drawable) {
-
-        if (drawable instanceof BitmapDrawable) {
-            return ((BitmapDrawable)drawable).getBitmap();
-        }
-
-        Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(bitmap);
-        drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
-        drawable.draw(canvas);
-
-        return bitmap;
     }
 
 }
