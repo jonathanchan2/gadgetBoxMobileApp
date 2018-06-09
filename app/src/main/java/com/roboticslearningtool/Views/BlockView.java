@@ -64,6 +64,7 @@ public class BlockView extends LinearLayout {
             setGravity(17);
 
 
+
         }
 //        rootView.setClickable(true);
 //        rootView.getRootView().setOnDragListener(new OnDragListener() {

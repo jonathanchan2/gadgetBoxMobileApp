@@ -14,6 +14,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import com.roboticslearningtool.Classes.RoboArrow;
+import com.roboticslearningtool.Classes.RoboBlock;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +25,7 @@ public class DrawingView extends RelativeLayout {
     Paint textPaint;
     Paint pathPaint;
     List<RoboArrow> arrowList ;
+    List<RoboBlock> blockList ;
     Path path;
     private Bitmap bitmap;
 
@@ -59,16 +61,16 @@ public class DrawingView extends RelativeLayout {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-
-        for(int i=0;i<arrowList.size();i++){
-            RoboArrow arrow = arrowList.get(i);
-            canvas.drawPath(arrow.getArrowPath(), arrow.getArrowPaint());
-            if(arrowList.get(i).getArrowhead()!= null) {
-                canvas.drawBitmap(arrow.getArrowhead(),arrow.getArrowHeadx() , arrow.getArrowHeady() , arrow.getArrowPaint());
-            }
+if (arrowList != null) {
+    for (int i = 0; i < arrowList.size(); i++) {
+        RoboArrow arrow = arrowList.get(i);
+        canvas.drawPath(arrow.getArrowPath(), arrow.getArrowPaint());
+        if (arrowList.get(i).getArrowhead() != null) {
+            canvas.drawBitmap(arrow.getArrowhead(), arrow.getArrowHeadx(), arrow.getArrowHeady(), arrow.getArrowPaint());
         }
+    }
 
-
+}
     }
 
 

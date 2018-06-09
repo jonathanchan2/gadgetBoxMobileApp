@@ -26,7 +26,10 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.roboticslearningtool.Classes.RoboCodeEvent;
 import com.roboticslearningtool.R;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -161,6 +164,7 @@ public class RoboFrg extends Fragment{
                 }
                 Toast.makeText(getActivity().getApplicationContext(), "Command Loaded!",
                         Toast.LENGTH_LONG).show();
+                EventBus.getDefault().postSticky(new RoboCodeEvent(roboCommand));
                 currentFile.setText(getFileName(uri));
             }
         }

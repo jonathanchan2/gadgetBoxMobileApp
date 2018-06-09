@@ -20,19 +20,25 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.roboticslearningtool.Classes.RoboArrow;
 import com.roboticslearningtool.Classes.RoboBlock;
+import com.roboticslearningtool.Classes.RoboCodeEvent;
 import com.roboticslearningtool.R;
 import com.roboticslearningtool.Views.BlockView;
 import com.roboticslearningtool.Views.DrawingView;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
 
-public class BlockViewFrg extends Fragment{
+public class BlockViewFrg extends Fragment {
 
     Button selectFile, sendFile;
 
@@ -46,11 +52,25 @@ public class BlockViewFrg extends Fragment{
 
 
     }
+    @Override
+    public void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
+
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+
         return inflater.inflate(R.layout.block_view_frag, container, false);
     }
 
@@ -58,17 +78,24 @@ public class BlockViewFrg extends Fragment{
     public void onViewCreated(final View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        final View blockview = view.findViewById(R.id.block_view_layout);
-        final RelativeLayout rl = (RelativeLayout) blockview;
 
-        String roboCode = "SS;CI(=1)Y;CS0301(=Y);CK(=4);BO(=2=100);BL(=2=75);CQ(=2);CT(=2);CG(=2);CL(=4);AC01;$";
+
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN,sticky = true)
+    public void onRoboCodeEvent(RoboCodeEvent event) {
+
+
+        final DrawingView drawingView = (DrawingView) getView().findViewById(R.id.block_view_layout);
+        drawingView.removeAllViews();
+        String roboCode = event.roboCode;
         final List<RoboBlock> blockList = new ArrayList<>();
         final List<RoboArrow> arrowList = new ArrayList<>();
         String[] data = roboCode.split(Pattern.quote(";"));
         int lastID = 0;
         // building up array of blocks
-        for (int i = 0; i < data.length-1; i++) {
-            if (!data[i].substring(0,2).equals("AC")){
+        for (int i = 0; i < data.length - 1; i++) {
+            if (!data[i].substring(0, 2).equals("AC")) {
                 blockList.add(new RoboBlock(data[i], getActivity().getApplicationContext()));
             }
 
@@ -76,24 +103,22 @@ public class BlockViewFrg extends Fragment{
 
         //building up array of arrows
 
-        for (int i = 0; i < data.length-1; i++) {
-            if (data[i].substring(0,2).equals("AC")){
-                 int end = Integer.parseInt(data[i].substring(2,data[i].length()));
-                arrowList.add(new RoboArrow(getActivity(),i-1,end,4));
-            }
-            else if (data[i].substring(0,2).equals("CS")){
+        for (int i = 0; i < data.length - 1; i++) {
+            if (data[i].substring(0, 2).equals("AC")) {
+                int end = Integer.parseInt(data[i].substring(2, data[i].length()));
+                arrowList.add(new RoboArrow(getActivity(), i - 1, end, 4));
+            } else if (data[i].substring(0, 2).equals("CS")) {
                 //Positive path
-                int end =  Integer.parseInt(data[i].substring(2,4));
+                int end = Integer.parseInt(data[i].substring(2, 4));
 
-                arrowList.add(new RoboArrow(getActivity(),i,end,2));
+                arrowList.add(new RoboArrow(getActivity(), i, end, 2));
 
                 //Negative path
-                 end = Integer.parseInt(data[i].substring(4,6));
-                arrowList.add(new RoboArrow(getActivity(),i,end,3));
-            }
-            else{
-                if (i < blockList.size()-1){
-                    arrowList.add(new RoboArrow(getActivity(),i,i+1,1));
+                end = Integer.parseInt(data[i].substring(4, 6));
+                arrowList.add(new RoboArrow(getActivity(), i, end, 3));
+            } else {
+                if (i < blockList.size() - 1) {
+                    arrowList.add(new RoboArrow(getActivity(), i, i + 1, 1));
                 }
 
 
@@ -111,27 +136,26 @@ public class BlockViewFrg extends Fragment{
             RelativeLayout.LayoutParams blockViewParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             blockViewParams.addRule(RelativeLayout.END_OF, lastID);
 
-
             blockViewParams.setMarginEnd(150);
 
             nextBlockView.setLayoutParams(blockViewParams);
-            if(nextBlock.hasvalues) {
+            if (nextBlock.hasvalues) {
                 nextBlock.setBlockValues();
             }
-            rl.addView(nextBlockView);
+            drawingView.addView(nextBlockView);
 
             lastID = nextBlockView.getId();
 
 
-
         }
 
-//Calculate Arrows coordinates and Display Arrows from arrowlist
-        blockview.getViewTreeObserver().addOnGlobalLayoutListener(
+
+        //Calculate Arrows coordinates and Display Arrows from arrowlist
+        drawingView.getViewTreeObserver().addOnGlobalLayoutListener(
                 new ViewTreeObserver.OnGlobalLayoutListener() {
                     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
                     public void onGlobalLayout() {
-                        blockview.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                        drawingView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
 
 
                         for (int i = 0; i < arrowList.size(); i++) {
@@ -142,10 +166,7 @@ public class BlockViewFrg extends Fragment{
 
                         }
 
-
-
-
-                        DrawingView drawView = (DrawingView) blockview;
+                        DrawingView drawView = (DrawingView) drawingView;
                         drawView.setArrowList(arrowList);
 
 
@@ -153,10 +174,8 @@ public class BlockViewFrg extends Fragment{
                 }
         );
 
-
-
-
-
     }
 
+
 }
+
