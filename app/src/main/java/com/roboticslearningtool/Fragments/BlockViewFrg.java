@@ -1,8 +1,10 @@
 package com.roboticslearningtool.Fragments;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.VectorDrawable;
@@ -10,6 +12,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
@@ -22,6 +25,8 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.gordonwong.materialsheetfab.MaterialSheetFab;
+import com.roboticslearningtool.Classes.Fab;
 import com.roboticslearningtool.Classes.RoboArrow;
 import com.roboticslearningtool.Classes.RoboBlock;
 import com.roboticslearningtool.Classes.RoboCodeEvent;
@@ -51,6 +56,7 @@ public class BlockViewFrg extends Fragment {
         super.onCreate(savedInstanceState);
 
 
+
     }
     @Override
     public void onStart() {
@@ -74,11 +80,21 @@ public class BlockViewFrg extends Fragment {
         return inflater.inflate(R.layout.block_view_frag, container, false);
     }
 
+
+
     @Override
     public void onViewCreated(final View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        Fab fab = (Fab) view.findViewById(R.id.fab);
+        View sheetView =  view.findViewById(R.id.fab_sheet);
+        View overlay =  view.findViewById(R.id.overlay);
+        int sheetColor = getResources().getColor(R.color.roboAppBase);
+        int fabColor = getResources().getColor(R.color.greenBlock);
 
+        // Initialize material sheet FAB
+        MaterialSheetFab materialSheetFab = new MaterialSheetFab<>(fab, sheetView, overlay,
+                sheetColor, fabColor);
 
     }
 
@@ -87,7 +103,7 @@ public class BlockViewFrg extends Fragment {
 
 
         final DrawingView drawingView = (DrawingView) getView().findViewById(R.id.block_view_layout);
-        drawingView.removeAllViews();
+//        drawingView.removeAllViews();
         String roboCode = event.roboCode;
         final List<RoboBlock> blockList = new ArrayList<>();
         final List<RoboArrow> arrowList = new ArrayList<>();
@@ -150,6 +166,7 @@ public class BlockViewFrg extends Fragment {
         }
 
 
+
         //Calculate Arrows coordinates and Display Arrows from arrowlist
         drawingView.getViewTreeObserver().addOnGlobalLayoutListener(
                 new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -173,6 +190,9 @@ public class BlockViewFrg extends Fragment {
                     }
                 }
         );
+
+
+
 
     }
 

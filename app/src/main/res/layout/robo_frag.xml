@@ -107,7 +107,6 @@
 
     </LinearLayout>
 
-
     <Button
         android:id="@+id/sendFile"
         android:layout_width="match_parent"
@@ -118,6 +117,7 @@
         android:text="SEND FILE TO ROBOT"
         android:textColor="#ffffff"
         android:textStyle="bold" />
+
 
 
 </LinearLayout>
