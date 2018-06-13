@@ -13,6 +13,7 @@ import android.database.Cursor;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.provider.OpenableColumns;
 import android.support.annotation.Nullable;
@@ -26,12 +27,17 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.roboticslearningtool.Classes.FileNameEvent;
 import com.roboticslearningtool.Classes.RoboCodeEvent;
 import com.roboticslearningtool.R;
 
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -68,6 +74,18 @@ public class RoboFrg extends Fragment{
         super.onCreate(savedInstanceState);
     }
 
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onStop() {
+        EventBus.getDefault().unregister(this);
+        super.onStop();
+    }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -139,6 +157,13 @@ public class RoboFrg extends Fragment{
 
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN,sticky= true)
+    public void onFileChanged(FileNameEvent event){
+        currentFile.setText(event.filename);
+
+
+    }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode,
                                  Intent resultData) {
@@ -168,6 +193,8 @@ public class RoboFrg extends Fragment{
                 currentFile.setText(getFileName(uri));
             }
         }
+
+
     }
 
 
@@ -335,6 +362,9 @@ public class RoboFrg extends Fragment{
         }
         return result;
     }
+
+
+
 
 
 }
