@@ -3,7 +3,10 @@ package com.roboticslearningtool.Classes;
 import android.content.Context;
 import android.graphics.drawable.GradientDrawable;
 import android.support.v4.content.ContextCompat;
+import android.text.Editable;
+import android.text.TextWatcher;
 
+import com.roboticslearningtool.Fragments.RoboFrg;
 import com.roboticslearningtool.R;
 import com.roboticslearningtool.Views.BlockView;
 
@@ -21,6 +24,7 @@ public class RoboBlock {
     private boolean y;
     private boolean dblblock ;
     public boolean hasvalues = false;
+    private String RoboCode;
 
     public void setTop(int top) {
         this.top = top;
@@ -38,10 +42,10 @@ public class RoboBlock {
 
 
 
-    public RoboBlock(String roboCode , Context mContext ) {
+    public RoboBlock(String RoboCodeinput , Context mContext ) {
 
 
-
+        this.RoboCode =RoboCodeinput ;
         Set<String> purpleblocks = new HashSet<>(Arrays.asList("BA","BB","BC","BD","BE","BF","BG","BH","CB","CC","BI","CD","CE","CF","AA"));
         Set<String> redblocks = new HashSet<>(Arrays.asList("CG","CT","CJ","CL","CH"));
         Set<String> blueblocks = new HashSet<>(Arrays.asList("CI","BO","BL"));
@@ -49,20 +53,20 @@ public class RoboBlock {
         Set<String> greenblocks = new HashSet<>(Arrays.asList("CK","CO","CU","CA","BJ","BK"));
 
 
-        if (roboCode.length()<= 2){
-            blocktype = roboCode;
+        if (RoboCode.length()<= 2){
+            blocktype = RoboCode;
         }
         else{
-            blocktype = roboCode.substring(0,2);
+            blocktype = RoboCode.substring(0,2);
         }
 
 
 
         // HERE STORES THE VALUE OF THE BLOCKS AND THE BLOCK TYPE(One or two block)
         //IT ALSO WRITES THE DATA INSDE THE BLOCKS!
-        if(roboCode.contains("(") && !(roboCode.substring(0,2).equalsIgnoreCase("CS")) &&!(roboCode.substring(0,2).equalsIgnoreCase("BN"))) {
+        if(RoboCode.contains("(") && !(RoboCode.substring(0,2).equalsIgnoreCase("CS")) &&!(RoboCode.substring(0,2).equalsIgnoreCase("BN"))) {
             hasvalues = true;
-            String values = roboCode.substring(roboCode.indexOf("(") + 1, roboCode.indexOf(")"));
+            String values = RoboCode.substring(RoboCode.indexOf("(") + 1, RoboCode.indexOf(")"));
             String[] data = values.split(Pattern.quote("="));
             if (data.length > 2) {
                 val1 = Integer.parseInt(data[1]);
@@ -74,9 +78,8 @@ public class RoboBlock {
                 val1 = Integer.parseInt(data[1]);
                 dblblock = false;
                 blockView = new BlockView(mContext,1);
-                blockView.getPortField().setText(data[1]);
             }
-            if (!roboCode.endsWith(")") && roboCode.contains(")")) {
+            if (!RoboCode.endsWith(")") && RoboCode.contains(")")) {
               y=true;
             }
         }
@@ -208,6 +211,48 @@ public class RoboBlock {
 
     public BlockView getBlockView() {
         return blockView;
+    }
+    public String getBlockCode(){
+        if(RoboCode.contains("(") && !(RoboCode.substring(0,2).equalsIgnoreCase("CS")) &&!(RoboCode.substring(0,2).equalsIgnoreCase("BN"))) {
+            hasvalues = true;
+            String values = RoboCode.substring(RoboCode.indexOf("(") + 1, RoboCode.indexOf(")"));
+            String[] data = values.split(Pattern.quote("="));
+            if (data.length > 2) {
+                val1 = Integer.parseInt(getBlockView().getPortField().getText().toString());
+                val2 =  Integer.parseInt(getBlockView().getValueField().getText().toString());
+                RoboCode = blocktype+"(="+val1+"="+val2+")";
+                if(y){
+                   RoboCode+= "Y";
+                }
+
+            } else {
+                val1 =  Integer.parseInt(getBlockView().getPortField().getText().toString());
+                RoboCode = blocktype+"(="+val1+")";
+                if(y){
+                    RoboCode+= "Y";
+                }
+
+            }
+
+
+
+        }
+
+        else if(blocktype.contains("SS")){
+           RoboCode = blocktype;
+
+        }
+
+        else if(blocktype.contains("XX")){
+            RoboCode = blocktype;
+
+        }
+
+        else{
+
+//Stubb
+        }
+        return RoboCode;
     }
 
     public void setBlockValues() {

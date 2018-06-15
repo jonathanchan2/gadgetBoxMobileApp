@@ -1,7 +1,9 @@
 package com.roboticslearningtool.Fragments;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -27,6 +29,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -42,6 +45,9 @@ import com.roboticslearningtool.Classes.RoboCodeEvent;
 import com.roboticslearningtool.R;
 import com.roboticslearningtool.Views.BlockView;
 import com.roboticslearningtool.Views.DrawingView;
+
+import net.rdrei.android.dirchooser.DirectoryChooserActivity;
+import net.rdrei.android.dirchooser.DirectoryChooserConfig;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -60,8 +66,12 @@ import java.util.regex.Pattern;
 
 public class BlockViewFrg extends Fragment {
 
-    private static final int FILE_SAVE_CODE = 22 ;
+    private static final int FILE_SAVE_CODE = 22;
     private static final int PICKFILE_REQUEST_CODE = 55;
+    private static final int REQUEST_DIRECTORY = 66;
+    final List<RoboBlock> blockList = new ArrayList<>();
+    final List<RoboArrow> arrowList = new ArrayList<>();
+    String programName = "Untitled";
     Button selectFile, sendFile;
 
     public BlockViewFrg() {
@@ -71,10 +81,8 @@ public class BlockViewFrg extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
-
     }
+
     @Override
     public void onStart() {
         super.onStart();
@@ -98,28 +106,61 @@ public class BlockViewFrg extends Fragment {
     }
 
 
-
     @Override
     public void onViewCreated(final View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
         Fab fab = (Fab) view.findViewById(R.id.fab);
-        View sheetView =  view.findViewById(R.id.fab_sheet);
-        View overlay =  view.findViewById(R.id.overlay);
+        View sheetView = view.findViewById(R.id.fab_sheet);
+        View overlay = view.findViewById(R.id.overlay);
         int sheetColor = getResources().getColor(R.color.roboAppBase);
         int fabColor = getResources().getColor(R.color.greenBlock);
         TextView save = (TextView) view.findViewById(R.id.fab_save);
         TextView load = (TextView) view.findViewById(R.id.fab_load);
-
+        final EditText[] programNameET = new EditText[1];
         save.setOnClickListener(new View.OnClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.KITKAT)
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
-                intent.setType("application/octet-stream");
 
+                AlertDialog.Builder builder;
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    builder = new AlertDialog.Builder(getContext(), android.R.style.Theme_Material_Dialog_Alert);
+                } else {
+                    builder = new AlertDialog.Builder(getContext());
+                }
+                LayoutInflater inflater = getActivity().getLayoutInflater();
+                LinearLayout view2 = (LinearLayout) inflater.inflate(R.layout.namedialog, null);
+                programNameET[0] = (EditText) view2.findViewById(R.id.progNameET);
+                programNameET[0].setText("Untitled");
+                builder.setTitle("Choose a Name for the Program")
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
 
-                startActivityForResult(intent, FILE_SAVE_CODE);
+                                String name = programNameET[0].getText().toString();
+                                final Intent chooserIntent = new Intent(getContext(), DirectoryChooserActivity.class);
+                                final DirectoryChooserConfig config = DirectoryChooserConfig.builder()
+                                        .newDirectoryName("Choose a Directory to Save the Program")
+                                        .allowReadOnlyDirectory(true)
+                                        .allowNewDirectoryNameModification(true)
+                                        .build();
+
+                                chooserIntent.putExtra(DirectoryChooserActivity.EXTRA_CONFIG, config);
+                                programName = name;
+                                startActivityForResult(chooserIntent, REQUEST_DIRECTORY);
+                            }
+                        })
+                        .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                // do nothing
+                            }
+                        })
+                        .setIcon(android.R.drawable.ic_dialog_alert);
+                AlertDialog dialog = builder.create();
+
+                dialog.setView(view2);
+                dialog.show();
+
 
             }
         });
@@ -141,14 +182,12 @@ public class BlockViewFrg extends Fragment {
                 sheetColor, fabColor);
 
 
-
-
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode,
                                  Intent resultData) {
-
+        super.onActivityResult(requestCode, resultCode, resultData);
         // The ACTION_OPEN_DOCUMENT intent was sent with the request code
         // READ_REQUEST_CODE. If the request code seen here doesn't match, it's the
         // response to some other intent, and the code below shouldn't run at all.
@@ -172,26 +211,32 @@ public class BlockViewFrg extends Fragment {
                 EventBus.getDefault().postSticky(new RoboCodeEvent(roboCommand));
                 EventBus.getDefault().postSticky(new FileNameEvent(getFileName(uri)));
             }
+        } else if (requestCode == REQUEST_DIRECTORY) {
+            if (resultCode == DirectoryChooserActivity.RESULT_CODE_DIR_SELECTED) {
+                String path = resultData.getStringExtra(DirectoryChooserActivity.RESULT_SELECTED_DIR);
+                String name = resultData.getStringExtra("name");
+
+                String program = GenerateRoboProgram();
+                generateFile(programName, program, path);
+
+            } else {
+                // Nothing selected
+            }
         }
 
-        else if (requestCode == FILE_SAVE_CODE && resultCode == Activity.RESULT_OK){
-            Uri uri = null;
-            uri = resultData.getData();
-            generateFile("Test","SS;CI(=1)Y;CS0301(=Y);CK(=4);BO(=2=75);BL(=2=75);CQ(=2);CT(=2);CG(=2);CL(=4);AC01;$");
-
-
-        }
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN,sticky = true)
+
+    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     public void onRoboCodeEvent(RoboCodeEvent event) {
 
 
         final DrawingView drawingView = (DrawingView) getView().findViewById(R.id.block_view_layout);
-//        drawingView.removeAllViews();
+        drawingView.removeAllViews();
+        blockList.clear();
+        arrowList.clear();
         String roboCode = event.roboCode;
-        final List<RoboBlock> blockList = new ArrayList<>();
-        final List<RoboArrow> arrowList = new ArrayList<>();
+
         String[] data = roboCode.split(Pattern.quote(";"));
         int lastID = 0;
         // building up array of blocks
@@ -251,7 +296,6 @@ public class BlockViewFrg extends Fragment {
         }
 
 
-
         //Calculate Arrows coordinates and Display Arrows from arrowlist
         drawingView.getViewTreeObserver().addOnGlobalLayoutListener(
                 new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -275,11 +319,31 @@ public class BlockViewFrg extends Fragment {
                     }
                 }
         );
-
-
-
+        RoboCodeEvent stickyEvent = EventBus.getDefault().getStickyEvent(RoboCodeEvent.class);
+        // Better check that an event was actually posted before
+        if (stickyEvent != null) {
+            // "Consume" the sticky event
+            EventBus.getDefault().removeStickyEvent(stickyEvent);
+            // Now do something with it
+        }
 
     }
+
+    private String GenerateRoboProgram() {
+        String output = "";
+        for (int i = 0; i < blockList.size(); i++) {
+            RoboBlock block = blockList.get(i);
+            output += block.getBlockCode();
+            if (i < blockList.size()) {
+                output += ";";
+            } else {
+                output += ";$";
+            }
+
+        }
+        return output;
+    }
+
     private String readTextFromUri(Uri uri) throws IOException {
         InputStream inputStream = getActivity().getContentResolver().openInputStream(uri);
         BufferedReader reader = new BufferedReader(new InputStreamReader(
@@ -315,15 +379,11 @@ public class BlockViewFrg extends Fragment {
         return result;
     }
 
-    public void generateFile( String sFileName, String sBody) {
+    public void generateFile(String name, String body, String path) {
         try {
-            File root = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "Notes");
-            if (!root.exists()) {
-                root.mkdirs();
-            }
-            File gpxfile = new File(root, sFileName+".gbx");
-            FileWriter writer = new FileWriter(gpxfile);
-            writer.append(sBody);
+            File file = new File(path, name + ".gbx");
+            FileWriter writer = new FileWriter(file);
+            writer.append(body);
             writer.flush();
             writer.close();
         } catch (IOException e) {
