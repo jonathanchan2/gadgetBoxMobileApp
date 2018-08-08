@@ -39,6 +39,7 @@ import android.widget.Toast;
 import com.roboticslearningtool.Classes.RoboBlock;
 import com.roboticslearningtool.Fragments.BlockViewFrg;
 import com.roboticslearningtool.Fragments.RoboFrg;
+import com.roboticslearningtool.Fragments.SimpleFragment;
 import com.roboticslearningtool.R;
 import com.roboticslearningtool.Views.BlockView;
 
@@ -80,8 +81,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+//        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+//        setSupportActionBar(toolbar);
 
         ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
         setupViewPager(viewPager);
@@ -174,7 +175,7 @@ public class MainActivity extends AppCompatActivity {
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
         adapter.addFragment(new RoboFrg(), "Robot Log");
-        adapter.addFragment(new BlockViewFrg(), "Block View");
+        adapter.addFragment(new BlockViewFrg() , "Block View");
         viewPager.setAdapter(adapter);
     }
 

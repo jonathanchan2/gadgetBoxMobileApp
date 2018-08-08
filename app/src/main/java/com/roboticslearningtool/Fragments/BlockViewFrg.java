@@ -36,8 +36,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.gordonwong.materialsheetfab.MaterialSheetFab;
-import com.roboticslearningtool.Classes.Fab;
+
 import com.roboticslearningtool.Classes.FileNameEvent;
 import com.roboticslearningtool.Classes.RoboArrow;
 import com.roboticslearningtool.Classes.RoboBlock;
@@ -46,8 +45,6 @@ import com.roboticslearningtool.R;
 import com.roboticslearningtool.Views.BlockView;
 import com.roboticslearningtool.Views.DrawingView;
 
-import net.rdrei.android.dirchooser.DirectoryChooserActivity;
-import net.rdrei.android.dirchooser.DirectoryChooserConfig;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -110,9 +107,8 @@ public class BlockViewFrg extends Fragment {
     public void onViewCreated(final View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        Fab fab = (Fab) view.findViewById(R.id.fab);
-        View sheetView = view.findViewById(R.id.fab_sheet);
-        View overlay = view.findViewById(R.id.overlay);
+
+
         int sheetColor = getResources().getColor(R.color.roboAppBase);
         int fabColor = getResources().getColor(R.color.greenBlock);
         TextView save = (TextView) view.findViewById(R.id.fab_save);
@@ -133,33 +129,6 @@ public class BlockViewFrg extends Fragment {
                 LinearLayout view2 = (LinearLayout) inflater.inflate(R.layout.namedialog, null);
                 programNameET[0] = (EditText) view2.findViewById(R.id.progNameET);
                 programNameET[0].setText("Untitled");
-                builder.setTitle("Choose a Name for the Program")
-                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-
-                                String name = programNameET[0].getText().toString();
-                                final Intent chooserIntent = new Intent(getContext(), DirectoryChooserActivity.class);
-                                final DirectoryChooserConfig config = DirectoryChooserConfig.builder()
-                                        .newDirectoryName("Choose a Directory to Save the Program")
-                                        .allowReadOnlyDirectory(true)
-                                        .allowNewDirectoryNameModification(true)
-                                        .build();
-
-                                chooserIntent.putExtra(DirectoryChooserActivity.EXTRA_CONFIG, config);
-                                programName = name;
-                                startActivityForResult(chooserIntent, REQUEST_DIRECTORY);
-                            }
-                        })
-                        .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                // do nothing
-                            }
-                        })
-                        .setIcon(android.R.drawable.ic_dialog_alert);
-                AlertDialog dialog = builder.create();
-
-                dialog.setView(view2);
-                dialog.show();
 
 
             }
@@ -176,10 +145,6 @@ public class BlockViewFrg extends Fragment {
                 startActivityForResult(intent, PICKFILE_REQUEST_CODE);
             }
         });
-
-        // Initialize material sheet FAB
-        MaterialSheetFab materialSheetFab = new MaterialSheetFab<>(fab, sheetView, overlay,
-                sheetColor, fabColor);
 
 
     }
@@ -210,17 +175,6 @@ public class BlockViewFrg extends Fragment {
                         Toast.LENGTH_LONG).show();
                 EventBus.getDefault().postSticky(new RoboCodeEvent(roboCommand));
                 EventBus.getDefault().postSticky(new FileNameEvent(getFileName(uri)));
-            }
-        } else if (requestCode == REQUEST_DIRECTORY) {
-            if (resultCode == DirectoryChooserActivity.RESULT_CODE_DIR_SELECTED) {
-                String path = resultData.getStringExtra(DirectoryChooserActivity.RESULT_SELECTED_DIR);
-                String name = resultData.getStringExtra("name");
-
-                String program = GenerateRoboProgram();
-                generateFile(programName, program, path);
-
-            } else {
-                // Nothing selected
             }
         }
 
@@ -327,6 +281,8 @@ public class BlockViewFrg extends Fragment {
             // Now do something with it
         }
 
+
+
     }
 
     private String GenerateRoboProgram() {
@@ -390,6 +346,7 @@ public class BlockViewFrg extends Fragment {
             e.printStackTrace();
         }
     }
+
 
 }
 
