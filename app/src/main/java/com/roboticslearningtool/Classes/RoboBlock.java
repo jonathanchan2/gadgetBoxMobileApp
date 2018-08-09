@@ -163,10 +163,10 @@ public class RoboBlock {
                 blockView.getIcon().setImageDrawable(ContextCompat.getDrawable(mContext.getApplicationContext(), R.drawable.stopwatch));
                 break;
             case("CT"):
-                blockView.getIcon().setImageDrawable(ContextCompat.getDrawable(mContext.getApplicationContext(), R.drawable.motorstop));
+                blockView.getIcon().setImageDrawable(ContextCompat.getDrawable(mContext.getApplicationContext(), R.drawable.motorstopright));
                 break;
             case("CG"):
-                blockView.getIcon().setImageDrawable(ContextCompat.getDrawable(mContext.getApplicationContext(), R.drawable.motorstop));
+                blockView.getIcon().setImageDrawable(ContextCompat.getDrawable(mContext.getApplicationContext(), R.drawable.motorstopleft));
                 break;
             case("CL"):
                 blockView.getIcon().setImageDrawable(ContextCompat.getDrawable(mContext.getApplicationContext(), R.drawable.lightoff));
